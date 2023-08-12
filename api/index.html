@@ -7,27 +7,39 @@
       content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0,viewport-fit=cover"
     />
     <title>请使用浏览器打开</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-      }
-      #tips {
-        font-size: 25px;
-        text-align: center;
-        line-height: 50px;
-        padding: 20px;
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        margin: 20px;
-        background-color: #f8f8f8;
-      }
-    </style>
   </head>
-  <body>
+  <body style="background-color: #f7f7f7">
+    <div id="arrow" style="overflow: hidden; display: none">
+      <img src="arrow.png" style="width: 150px; float: right" />
+    </div>
     <div
       id="tips"
-      style="font-size: 25px; text-align: center; line-height: 50px"
+      style="
+        font-size: 30px;
+        text-align: center;
+        line-height: 50px;
+        width: 100%;
+      "
     ></div>
+    <div style="text-align: center">
+      <button
+        id="copyBtn"
+        style="
+          display: none;
+          margin-top: 30px;
+          width: 150px;
+          height: 50px;
+          background-color: #c43979;
+          border-radius: 15px;
+          border: 1px solid #c43979;
+          color: white;
+          font-size: large;
+        "
+      >
+        点击复制
+      </button>
+    </div>
+
     <script>
       var url = document.location.toString();
       var urlParmStr = url.slice(url.indexOf("=") + 1);
@@ -38,44 +50,35 @@
       var isIos = ua.indexOf("iphone") != -1 || ua.indexOf("ipad") != -1;
 
       var notice_openBrowser =
-        '<h2>请点击右上角，通过浏览器打开本页面。</h2><br />或点击下面的按钮复制到浏览器打开：<button id="copyButton">复制</button>';
+        "<h2>请点击右上角，在浏览器打开本页面。</h2><br/>或点击右上角复制链接到浏览器打开";
 
-      document.getElementById("copyButton").onclick = function () {
-        navigator.clipboard
-          .writeText(url)
-          .then(() => {
-            console.log("复制成功");
-          })
-          .catch((err) => {
-            console.error("复制失败: ", err);
-          });
-      };
       // 判断是不是在微信客户端打开
       if (isWeixin || isQQ) {
         // 判断是在Android的微信客户端还是Ios的微信客户端
-        if (isAndroid) {
-          document.getElementById("tips").innerHTML = notice_openBrowser;
-        } else if (isIos) {
-          document.getElementById("tips").innerHTML = notice_openBrowser;
-        } else {
-          document.getElementById("tips").innerHTML = notice_openBrowser;
-        }
+        document.getElementById("tips").innerHTML = notice_openBrowser;
+        document.getElementById("arrow").style.display = "";
+        const btn = document.getElementById("copyBtn");
+        btn.style.display = "";
+        btn.addEventListener("click", () => {
+          // 该方法可以写入特定字符串到操作系统的剪切板，并返回一个Promise
+          // 一旦剪贴板的内容被更新，它就会被解析。如果调用者没有写入剪贴板的权限，则拒绝写入剪切板（reject）
+          navigator.clipboard
+            .writeText(url)
+            .then(() => {
+              btn.innerText = "复制成功";
+            })
+            .catch(() => {
+              btn.innerText = "复制失败";
+            });
+        });
       } else {
         // 不是微信客户端，直接可以访问链接
         if (urlParmStr == url) {
           urlParmStr = "https://chituai.github.io/antired";
         }
         console.log(urlParmStr);
-        location.href = url;
+        location.href = urlParmStr;
       }
-    </script>
-    <script
-      charset="UTF-8"
-      id="LA_COLLECT"
-      src="//sdk.51.la/js-sdk-pro.min.js"
-    ></script>
-    <script>
-      LA.init({ id: "K8YSQIj3WDtj9gG6", ck: "K8YSQIj3WDtj9gG6" });
     </script>
   </body>
 </html>
